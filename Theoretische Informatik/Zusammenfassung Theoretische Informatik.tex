@@ -1,0 +1,757 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{cancel}
+\usepackage{graphicx}
+\usepackage[labelformat=empty]{caption}
+\usepackage{booktabs}
+\usepackage{wasysym}
+\usepackage[utf8x]{inputenc}
+
+\geometry{
+	a4paper,
+ 	left=20mm,
+ 	top=20mm,
+ 	bottom=20mm,
+}
+
+\setlength{\parindent}{0pt}
+
+\newcommand{\ttc}{\text{Time}}
+\newcommand{\tsc}{\text{Space}}
+\newcommand{\sat}{\text{SAT}}
+\newcommand{\clique}{\text{CLIQUE}}
+\newcommand{\vc}{\text{VC}}
+\newcommand{\npo}{\text{NPO}}
+\newcommand{\code}{\text{Code}}
+
+\begin{document}
+
+\section{Alphabete, Wörter und Sprachen}
+
+\begin{description}[labelindent=16pt,style=multiline,leftmargin=5cm, noitemsep]
+	\item[Alphabet $\Sigma$:] Eine endliche, nichtleere Menge bestehend aus \textbf{Buchstaben}
+	\item[Wort:] Ein Wort {\"u}ber $\Sigma$ ist eine endliche Folge von Buchstaben. ($\Sigma^*$ ist die Menge aller Wörter)
+	\item[Sprache $L$:] Eine Menge von Wörtern, also eine Teilmenge von $\Sigma^*$
+\end{description}
+
+F{\"u}r ein \textbf{Wort} in $\Sigma^*$ gilt:
+\begin{equation*}
+\begin{split}
+	\textbf{Konkatenation:}\quad & \text{Kon}(x,y) = x \cdot y = xy \\
+	\textbf{Reversal:} \quad & a^R = (a_1a_2...a_n)^R = a_na_{n-1}...a_1 \\
+	\textbf{Exponent:} \quad & (abc)^3 = abcabcabc \\
+	\textbf{Vorkommen:} \quad & |x = abcabcabc|_a = 3\quad\text{(Anzahl $a$ in $x$)} \\
+	\textbf{kanonische Ordnung:} \quad & u < v \Leftrightarrow (|u| < |v|) \lor (|u| = |v| \land u = x \cdot s_i \cdot u' \land v = x \cdot s_j \cdot v') \quad\text{(mit $i < j$)} \\
+\end{split}
+\end{equation*}
+
+F{\"u}r eine \textbf{Sprache} gilt:
+\begin{equation*}
+\begin{split}
+	\textbf{Konkatenation:}\quad & L_1\cdot L_2 = L_1L_2 = \{vw\ |\ v \in L_1 \land w \in L_2\} \\
+	\textbf{Exponent:}\quad & L^{i+1} = L^i\cdot L \\
+	\textbf{Kleene'schen Stern:}\quad & L^* = \bigcup_{i\in\mathbb{N}}L^i \\
+	\textbf{Plus:}\quad & L^+ = LL^*
+\end{split}
+\end{equation*}
+
+\subsection{Algorithmische Probleme}
+
+\subsubsection{Entscheidungsproblem}
+F{\"u}r jedes $x \in \Sigma^*$ ist zu entscheiden, ob $x \in L$ oder $x \notin L$. Ein \textbf{Algorithmus} $A$ löst das Entscheidungsproblem $(\Sigma, L)$, falls f{\"u}r alle $x \in \Sigma^*$ gilt:
+\begin{equation*}
+	A(x) = \begin{cases}
+		1, \quad\text{falls $x \in L$} \\
+		0, \quad\text{falls $x \notin L$} \\
+	\end{cases}
+\end{equation*}
+
+$A$ \textbf{erkennt} somit die Sprache. $L$ ist \textbf{rekursiv}, falls so ein Algorithmus $A$ existiert.
+
+\subsubsection{Funktion (Transformation)}
+Ein \textbf{Algorithmus} $A$ berechnet eine Funktion $f: \Sigma^* \mapsto \Gamma^*$, falls
+\begin{equation*}
+	A(x) = f(x) \quad\text{f{\"u}r alle $x \in \Sigma^*$}
+\end{equation*}
+
+Entscheidungsprobleme sind spezielle F{\"a}lle von Funktionsberechnungen.
+
+\subsubsection{Relationsproblem}
+Sei $R \subseteq \Sigma^*\times\Gamma^*$ eine Relation, dann löst ein \textbf{Algorithmus} $A$ das Relationsproblem $R$, falls f{\"u}r alle $(x,y) \in R$ gilt:
+\begin{equation*}
+	(x, A(x)) \in R
+\end{equation*}
+
+\emph{Bemerkung:} Es ist nur nötig, ein einziges $y = A(x)$ von potenziel unendlich vielen $y$ zu finden.
+
+\subsection{Kolmogorov Komplexit{\"a}t}
+
+Die Kosten f{\"u}r die bin{\"a}re Kodierung von $w_n$ der L{\"a}nge $n$ sind
+\begin{equation*}
+	K(w_n) \leq \lceil\log_2(n+1)\rceil + c \leq \log_2(n) + c + 1
+\end{equation*}
+
+\paragraph{Vorgehen:}
+\begin{enumerate}[noitemsep]
+	\item Schreibe ein Programm, welches das gew{\"u}nschte Resultat liefert
+	\item Finde den Term, der von $n$ abh{\"a}ngig ist ($\log$ wird mit der Anzahl $n$ im Programm multipliziert)
+	\item Dieser Term hat die Komplexit{\"a}t $\lceil \log_2(n + 1) \rceil + c$
+	\item Jetzt muss nur noch $n$ in Abh{\"a}ngigkeit von $|w_n|$ ausgedr{\"u}ckt werden
+\end{enumerate}
+
+Ein Wort $x \in (\Sigma_\text{bool})^*$ heisst \textbf{zuf{\"a}llig}, falls gilt:
+\begin{equation*}
+	K(x) \geq |x|
+\end{equation*}
+
+Analog dazu heisst eine Zahl $n$ \textbf{zuf{\"a}llig}, falls gilt:
+\begin{equation*}
+	K(n) = K(\text{Bin}(n)) \geq \lceil\log_2(n+1)\rceil-1
+\end{equation*}
+
+\section{Endliche Automaten}
+
+Ein \textbf{endlicher Automat} (EA) ist ein Tupel $M = (Q, \Sigma, \delta, q_0, F)$:
+\begin{description}[labelindent=16pt,style=multiline,leftmargin=2.5cm, noitemsep]
+	\item[$Q$:] Eine endliche Menge von Zust{\"a}nden
+	\item[$\Sigma$:] Das Eingabealphabet
+	\item[$q_0 \in Q$:] Der Anfangszustand
+	\item[$F \subseteq Q$:] Die Menge der akzeptierenden Zust{\"a}nde (Zust{\"a}nde, die das momentan gelesene Wort als valid erkl{\"a}ren)
+	\item[$\delta$:] Die {\"U}bergangsfunktion ($\delta: (Q\times\Sigma) \mapsto Q$)
+\end{description}
+
+Weiter definiert sind folgende:
+\begin{description}[labelindent=16pt,style=multiline,leftmargin=7.5cm, noitemsep]
+	\item[Konfiguration:] Ein Element aus $(Q \times \Sigma^*)$. Befindet sich $M$ in der Konfiguration $(q, w)$ , bedeutet das, dass $M$ im Zustand $q$ ist und noch das Suffix $w$ lesen soll.
+	\item[Startkonfiguration:] Die Berechnung von $M$ auf $x$ muss in der Konfiguration $(q_0, x) \in (\{q_0\} \times \Sigma^*)$ anfangen
+	\item[Endkonfiguration:] Jedes Element in $(Q \times \{\lambda\})$
+	\item[Schritt:] Eine Relation auf Konfigurationen definiert als $(q,w) \vdash_M (p,x) \Leftrightarrow w = ax, a \in \Sigma$ und $\delta(q, a) = p$. Sie entspricht einer Anwendung der {\"U}bergangsfunktion auf die aktuelle Konfiguration.
+	\item[Berechnung $C$:] Eine endliche Folge $C = C_0,C_1,C_2,...,C_n$ von Konfigurationen, so dass $C_i \vdash_M C_{i+1}$. Weiter ist $C$ eine \textbf{Berechnung von $M$ auf eine Eingabe $x \in \Sigma^*$}, falls $C_0$ eine Startkonfiguration und $C_n$ eine Endkonfiguration ist. Ist $C_n \in (F \times \{\lambda\})$, so ist $C$ eine \textbf{akzeptierende Berechnung} (im Gegensatz zu \textbf{verwerfenden Berechnungen}).
+	\item[Akzeptierte Sprache $L(M)$:] $L(M) = \{ w \in \Sigma^*\ |$ die Berechnung auf $w$ endet in einer Endkonfiguration $(q, \lambda)$ mit $q \in F \}$
+	\item[Klasse der regul{\"a}ren Sprachen $\mathcal{L}_{EA}$:] Die Klasse der Sprachen, die von endlichen Automaten akzeptiert werden. Jede Sprache in $\mathcal{L}_{EA}$ wird \textbf{regul{\"a}r} genannt.
+\end{description}
+
+Zus{\"a}tzliche sind folgende Operationen definiert:
+\begin{description}[labelindent=16pt,style=multiline,leftmargin=4.5cm, noitemsep]
+	\item[$\vdash^*_M$:] Die \emph{reflexive} und \emph{transitive} H{\"u}lle der Schrittrelation $\vdash_M$. $(q,w) \vdash^*_M (p,u)$ ist, dass es eine Berechnung von $M$ gibt, die ausgehend von der Konfiguration $(q,w)$ zu der Konfiguration $(p,u)$ f{\"u}hrt.
+	\item[$\hat\delta: (Q \times \Sigma^*) \mapsto Q$:] (i) $\hat\delta(q,\lambda) = q$ f{\"u}r alle $q\in Q$ \\
+	(ii) $\hat\delta(q, wa) = \delta(\hat\delta(q, w), a)$ \\
+	Die Aussage $\hat\delta(q, w) = p$ bedeutet, dass wenn $M$ im Zustand $q$ das Wort $w$ zu lesen beginnt, dann endet $M$ im Zustand $p$.
+\end{description}
+
+Zwei endliche Automaten $A$ und $B$ heissen \textbf{{\"a}quivalent}, falls gilt:
+\begin{equation*}
+	L(A) = L(B)
+\end{equation*}
+
+\subsection{Nichtexistenz}
+
+Um zu zeigen, dass eine Sprache nicht regul{\"a}r ist ($L \notin \mathcal{L}_{EA}$), gen{\"u}gt es, zu beweisen, dass es keinen Automaten gibt, der die Sprache akzeptiert.
+
+\subsubsection{Lemma 3.3}
+
+Sei $A = (Q, \Sigma, \delta_A, q_0, F)$ ein EA. Seien weiter $x,y \in \Sigma^*$ mit $x \neq y$, wobei $x$ und $y$ nicht unbedingt in $L$ sein muss, so dass
+\begin{equation*}
+	(q_0, x) \vdash_A^* (p, \lambda)\quad\text{und}\quad (q_0, y) \vdash_A^* (p, \lambda)
+\end{equation*}
+
+Das heisst, dass nach dem Lesen der unterschiedlichen Wörter $x$ und $y$ der EA im gleichen Zustand endet. Daraus folgt, dass der EA in Zukunft zwischen den Wörtern nicht unterscheiden kann. Anders ausgedr{\"u}ckt:
+
+\begin{equation*}
+	\hat\delta_A(q_0, x) = \hat\delta_A(q_0, y) = p \quad (x, y \in \text{Kl}[p])
+\end{equation*}
+
+F{\"u}r jedes Suffix $z \in \Sigma^*$ gilt dann, dass beide Wörter $xz$ und $yz$ entweder akzeptiert oder beide verworfen werden, ansonsten ist die Sprache nicht regul{\"a}r:
+
+\begin{equation*}
+	xz \in L(A) \Leftrightarrow yz \in L(A)
+\end{equation*}
+
+\paragraph{Vorgehen:} Um zu beweisen, dass eine Sprache nicht regul{\"a}r ist, zeigt man, dass zwei Wörter zum selben Zustand f{\"u}hren m{\"u}ssen. \\
+Wir w{\"a}hlen $m$ als die Anzahl zust{\"a}nde im EA. Zus{\"a}tzlich w{\"a}hlen wir $m+1$ Wörter, die alle vom Automaten akzeptiert werden. Da es $m+1$ Wörter gibt, aber nur $m$ Zust{\"a}nde, m{\"u}ssen zwei unterschiedliche Wörter zum selben Zustand $y_0$ f{\"u}hren. Es folgt, dass beide Wörter mit einem $z$ konkateniert zu der Sprache $L$ gehören m{\"u}ssen. Wir w{\"a}hlen also einfach ein $z$ so dass nur eines der beiden Wörter sich in $L$ befindet.
+
+\subsubsection{Pumping Lemma f{\"u}r regul{\"a}re Sprachen}
+
+Sei $L$ regul{\"a}r, dann existiert eine Konstante $n_0 \in \mathbb{N}$, so dass sich jedes Wort $w \in \Sigma^*$, welches nicht zwingend in $L$ sein muss, mit $|w| \geq n_0$ in drei Teile $x, y, z$ zerlegen l{\"a}sst, so dass $w = yxz$, wobei
+
+\begin{enumerate}[label=(\roman*), noitemsep]
+	\item $|yx| \leq n_0$
+	\item $|x| \geq 1$
+	\item entweder $\{yx^kz\ |\ k \in \mathbb{N}\} \subseteq L$ oder $\{yx^kz\ |\ k \in \mathbb{N}\} \cap L = \emptyset$
+\end{enumerate}
+
+\paragraph{Vorgehen:} W{\"a}hle ein \textbf{konkretes} Wort mit L{\"a}nge $|w| \geq n_0 \in \mathbb{N}$ aus, so dass keine seiner Zerlegungen die Eigenschaften (i), (ii) und (iii) erf{\"u}llt.
+
+\subsubsection{Pumping Lemma f{\"u}r kontextfreie Sprachen}
+
+Sei $L$ kontextfrei. Dann existiert eine nur von $L$ abh{\"a}ngige Kontante $n_L$, so dass f{\"u}r alle Wörter $z \in L$ mit $|z| \geq n_L$ eine Zerlegung $z = uvwxy$ von $z$ existiert, so dass:
+\begin{enumerate}[label=(\roman*), noitemsep]
+	\item $|vx| \geq 1$
+	\item $|vwx| \leq n_L$
+	\item $\{uv^iwx^iy\ |\ i \in \mathbb{N}\} \subseteq L$
+\end{enumerate}
+
+\subsubsection{Methode der Kolmogorov Komplexit{\"a}t}
+
+Sei $L \subseteq \Sigma_\text{bool}^*$ eine regul{\"a}re Sprache. Sei $L_x = \{y \in \Sigma_\text{bool}^*\ |\ xy \in L\}$ f{\"u}r jedes $x \in \Sigma_\text{bool}^*$. Dann existiert eine Konstante $c$, so dass f{\"u}r alle $x,y \in \Sigma_\text{bool}^*$ gilt
+
+\begin{equation*}
+	K(y) \leq \lceil\log_2(n+1)\rceil + c
+\end{equation*}
+
+falls $y$ das $n$-te Wort in der Sprache $L$ ist.
+
+\subsection{Regul{\"a}re Ausdr{\"u}cke}
+
+Die Menge $RA(\Sigma)$ aller regul{\"a}ren Ausdr{\"u}cke {\"u}ber dem Alphabet $\Sigma$ ist rekursiv definiert durch:
+\begin{equation*}
+\begin{split}
+	\lambda \in RA(\Sigma),\ \emptyset \not\in RA(\Sigma) \qquad & L(\lambda) = \{\lambda\},\ L(\emptyset) = \{\emptyset\} \\
+	a \in RA(\Sigma) \text{ f{\"u}r alle } a \in \Sigma \qquad & L(a) = \{a\} \\
+	\alpha, \beta \in RA(\Sigma) \Rightarrow (\alpha, \beta) \in RA(\Sigma) \qquad & L(\alpha, \beta) = L(\alpha) \cdot L(\beta) \\
+	\alpha, \beta \in RA(\Sigma) \Rightarrow (\alpha + \beta) \in RA(\Sigma) \qquad & L(\alpha + \beta) = L(\alpha) \cup L(\beta) \\
+	\alpha \in RA(\Sigma) \Rightarrow \alpha^* \in RA(\Sigma) \qquad & L(\alpha^*) = (L(\alpha))^*
+\end{split}
+\end{equation*}
+
+Sei $\alpha_{ij}^{(k)}$ der regul{\"a}re Ausdruck, der alle Transitionen vom Zustand $i$ zu Zustand $j$ {\"u}ber die Zwischenzust{\"a}nde $k \in \{0,...,k\}$ beschreibt. Das heisst, es wird kein Zwischenzustand (Start- und Endzustand ausgenommen) $q$ ber{\"u}hrt, mit $q > k$.
+
+\begin{equation*}
+	\alpha_{ij}^{(k)} = \alpha_{ij}^{(k-1)} + \alpha_{ik}^{(k-1)}\cdot (\alpha_{kk}^{(k-1)})^* \cdot \alpha_{kj}^{(k-1)}
+\end{equation*}
+	
+\subsection{Nichtdeterminismus}	
+
+Ein \textbf{nichtdeterministischer endlicher Automat} (NEA) ist wie ein endlicher Automat ein Tupel $M = (Q, \Sigma, \delta, q_0, F)$. Der einzige Unterschied ist, dass ein NEA zu einem Zustand $q$ und gelesenen Zeichen $a$ zu mehreren oder gar keinem Zustand {\"u}bergehen kann. \\
+Dementsprechend ist $x$ in $L(M)$, falls es mindestens eine akzeptierte Berechnung auf $x$ gibt. Zus{\"a}tzlich kann eine nicht akzeptierte Berechnung auch fr{\"u}hzeitig enden, falls von dem momentanen Zustand $q$ keine weiteren Zust{\"a}nde f{\"u}r das gelesene Zeichen gibt ($\delta(q, a) = \emptyset$).
+
+\begin{equation*}
+	L(M) = \{w \in \Sigma^*\ |\ \hat\delta(q, a) \cap F \neq \emptyset\}
+\end{equation*}
+
+Ausserdem gilt $\mathcal{L}_{NEA} = \mathcal{L}_{EA}$: Zu jedem NEA $M$ existiert ein EA $A$, so dass
+\begin{equation*}
+	L(M) = L(A)
+\end{equation*}
+
+\subsubsection{$\lambda$-NEA}
+
+$\lambda$-NEAs sind genau gleich definiert wie NEAs, also auch ein Tupel $M = (Q, \Sigma, \delta, q_0, F)$. Die {\"u}bergangsfunktion $\delta$ ist jedoch wie folgt definiert:
+\begin{equation*}
+	\delta: (Q\times(\Sigma \cup \{\lambda\})) \mapsto Q
+\end{equation*}
+Es kann also zus{\"a}tzlich auch dass leere Wort $\lambda$ eingelesen werden. \\
+
+Durch die Elimination der $\lambda$-Kanten l{\"a}sst sich auch zeigen, dass $\mathcal{L}_{\lambda-NEA} = \mathcal{L}_{NEA}$.
+
+\section{Grammatiken}
+
+Eine Grammatik $G = (\Sigma_N, \Sigma_T, P, S)$ ist ein Tupel mit $\Sigma = \Sigma_N \cup \Sigma_T$:
+
+\begin{description}[labelindent=16pt,style=multiline,leftmargin=3cm, noitemsep]
+	\item[$\Sigma_N$:] Die Nichtterminalsymbole spielen die Rolle von Variablen und d{\"u}rfen in der Sprache nicht vorkommen.
+	\item[$\Sigma_T$:] Die Terminalsymbole, die bisherige Nutzung zur Gestaltung von Wörtern aus der betrachteten Sprache.
+	\item[$S \in \Sigma_N$:] Das Startsymbol
+	\item[$P$:] Die Menge der Ableitungsregeln ist eine Teilmenge von $\Sigma^*\Sigma_N\Sigma^* \times \Sigma^*$
+	\item[$(\alpha, \beta) \in P$:] Die Regel, die besagt, dass $\alpha$ kann in $G$ durch $\beta$ ersetzt werden (auch $\alpha \rightarrow_G \beta$)
+\end{description}
+
+Sei weiter $\gamma, \delta \in \Sigma^*$, dann sagen wir dass $\delta$ aus $\gamma$ in einem Ableitungsschritt in $G$ ableitbar ist, genau dann wenn $w_1$ und $w_2 \in \Sigma^*$ und eine Regel $(\alpha, \beta) \in P$ existieren, so dass
+\begin{equation*}
+	\gamma \Rightarrow_G \delta :\Leftrightarrow \gamma = w_1\alpha w_2 \text{ und } w_1\beta w_2
+\end{equation*}
+
+Weiter bedeutet, $S \Rightarrow_G^* w$, dass $w$ von $G$ erzeugt wird. Die von $G$ erzeugte Sprache ist:
+\begin{equation*}
+	L(G) = \{w \in \Sigma^*_T\ |\ S \Rightarrow_G^* w\}
+\end{equation*}
+
+\begin{description}[labelindent=16pt,style=multiline,leftmargin=5.5cm, noitemsep]
+	\item[Typ-0:] Die Klasse der allgemeinen, uneingeschr{\"a}nkten Grammatiken
+	\item[kontextsensitiv/Typ-1:] $|\alpha| \leq |\beta|$ f{\"u}r alle Regeln $(\alpha, \beta) \in P$. Es folgt, dass kein Teilwort $\alpha$ durch ein k{\"u}rzeres Teilwort $\beta$ ersetzen kann.
+	\item[kontextfrei/Typ-2:] $\alpha \in \Sigma_N$ und $\beta \in (\Sigma_N \cup \Sigma_T)^*$ f{\"u}r alle Regeln $(\alpha, \beta) \in P$. Es folgt, dass alle Regeln die Form $X \rightarrow \beta$ f{\"u}r ein Nichtterminal $X$ haben.
+	\item[regul{\"a}r/Typ-3:] $\alpha \in \Sigma_N$ und $\beta \in \Sigma_T^*\cdot\Sigma_N \cup \Sigma_T^*$ f{\"u}r alle Regeln $(\alpha, \beta) \in P$. Das bedeutet, dass die Regeln die Form $X \rightarrow u$ oder $X \rightarrow uY$ f{\"u}r ein $u \in \Sigma_T^*, X,Y \in \Sigma_N$ haben (enth{\"a}lt höchstens ein Nichtterminal welches nur als letztes Symbol vorkommen darf).
+	\item[normiert:] falls alle Regeln nur eine der folgenden drei Regeln haben:
+	\begin{enumerate}[label=(\roman*), noitemsep]
+		\item $S \rightarrow \lambda$, wobei S das Startsymbol ist
+		\item $A \rightarrow a$ f{\"u}r $A \in \Sigma_N$ und $a \in \Sigma_T$
+		\item $B \rightarrow bC$ f{\"u}r $B,C \in \Sigma_N$ und $b \in \Sigma_T$ 
+	\end{enumerate}
+\end{description}
+
+Es gilt:
+\begin{equation*}
+	\mathcal{L}_3 = \mathcal{L}_{EA}
+\end{equation*}
+
+\subsection{Beweis durch Induktion}
+
+Zu zeigen: $L(G_1) = \{...\}$
+\begin{enumerate}
+	\item Zeige, dass: $w \in L(G_1)$, eine Ableitung fur w in $G_1$ zu geben.
+	\item G1 nur Wörter vom w abgeleitet werden können. Zeigen wir durch induktion. Zuerst mit ein ableitung es gilt. Dann nehmen wir ein $\alpha$ bei dem wir annehmen dass es geht, wir ableiten noch einmal und zeigen dass es immer noch zu A gehort.
+\end{enumerate}
+
+\section{Turingmaschinen}
+
+Eine Turingmaschine ist eine Verallgemeinerung eines EA und besthet informell aus:
+\begin{description}[labelindent=16pt,style=multiline,leftmargin=4.5cm, noitemsep]
+	\item[Kontrolle:] Enth{\"a}lt das Programm
+	\item[Unendliches Band:] Eingabeband und Speicher
+	\item[Lese-/Schreibkopf:] Kann sich in beide Richtungen auf dem Band bewegen
+\end{description}
+
+\textbf{Bemerkung:} \begin{itemize}
+	\item Das Band ist nur nach rechts unendlich, links ist es mit dem Randsymbol $\cent$ begrenzt, welches von der Maschine nicht {\"u}berschritten oder {\"u}berschrieben werden darf. Dies erlaubt es, das Band \textbf{durchzunummerieren}.
+	\item Die Felder, die nicht beschriftet sind, enthalten das Leerfeldsymbol $\textvisiblespace$
+\end{itemize}
+
+Die \textbf{{\"A}hnlichkeit} zu den EAs besteht in der Kontrolle {\"u}ber eine endliche Zustandsmenge und dem Band, das am Anfang das Eingabewort enth{\"a}lt. \\
+Der \textbf{Hauptunterschied} liegt darin, dass eine Turingmaschine mit dem Band {\"u}ber einen unendlich grossen Speicher verf{\"u}gt. \\
+
+Formell ist eine \textbf{Turingmaschine} (TM) ein Tupel $M = (Q, \Sigma, \Gamma, \delta, q_0, q_\text{accept}, q_\text{reject})$, wobei
+
+\begin{description}[labelindent=16pt,style=multiline,leftmargin=4.5cm, noitemsep]
+	\item[$Q$:] Eine endliche Menge von Zust{\"a}nden
+	\item[$\Sigma$:] Das Eingabealphabet
+	\item[$\Gamma$:] Das Arbeitsalphabet (alle Symbole, die in Feldern des Bandes auftreten d{\"u}rfen), wobei $\Sigma \subseteq \Gamma$ und $\cent, \textvisiblespace \in \Gamma$ gelten, wie auch $\Gamma \cap Q = \emptyset$
+	\item[$\delta$:] Die {\"U}bergangsfunktion\\ ($\delta: (Q-\{q_\text{accept}, q_\text{reject}\}\times\Gamma) \mapsto Q\times\Gamma\times\{L,R,N\}$).  \\$M$ kann also eine Aktion $(q, X, Z) \in Q \times \Gamma \times \{L, R, N\}$ aus einem aktuellen Zustand $q$ beim Lesen eines Symbols $Y \in \Gamma$ durchf{\"u}hren, falls $\delta(p, Y) = (q, X, Z)$. Dies bedeutet der {\"u}bergang von $p$ nach $q$, das Ersetzen von $Y$ durch $X$ und die Bewegung des Kopfes gem{\"a}ss $Z$ (\textbf{L}inks, \textbf{R}echts, \textbf{N}ichts).
+	\item[$q_0 \in Q$:] Der Anfangszustand
+	\item[$q_\text{\normalfont accept} \in Q$:] Der akzeptierende Zustand
+	\item[$q_\text{\normalfont reject} \in Q-\{q_\text{\normalfont accept}\}$:] Der verwerfende Zustand
+\end{description}
+
+Die \textbf{akzeptierte Sprache} der Turingmaschine $M$ ist
+\begin{equation*}
+	L(M) = \{w \in \Sigma^*\ |\ q_0\cent w \vdash_M^* yq_\text{accept}z,\text{ f{\"u}r irgendwelche }y,z \in \Gamma^*\}
+\end{equation*}
+
+Weiter \textbf{berechnet} $M$ eine Funktion $F:\Sigma^* \mapsto \Gamma^*$, falls
+\begin{equation*}
+	q_0\cent x \vdash_M^* q_\text{accept}\cent F(x)
+\end{equation*}
+
+\subsection{Kodierung von Turingmaschinen}
+
+Sei $M$ eine TM mit $Q = \{q_0, q_1, ..., q_m, q_\text{accept}, q_\text{reject}\}$ und $\Gamma = \{A_1, A_2,...,A_r\}$
+
+\begin{equation*}
+\begin{split}
+	\code(q_i) & = 10^{i+1}1 \quad\text{f{\"u}r } i = 0,1,...,m \\
+	\code(q_\text{accept}) & = 10^{m+2}1 \\
+	\code(q_\text{reject}) & = 10^{m+3}1 \\
+	\code(A_j) & = 110^j11 \quad\text{f{\"u}r } j = 1,...,r \\
+	\code(N) & = 1110111 \\
+	\code(R) & = 1110^2111 \\
+	\code(L) & = 1110^3111 \\
+	\code(\delta(p, A_l) = (q, A_m, \alpha)) & = \#\code(p)\code(A_l)\code(q)\code(A_m)\code(\alpha)\#
+\end{split}
+\end{equation*}
+
+\subsection{Mehrband-Turingmaschinen}
+
+Eine \textbf{$k$-Band-Turingmaschine} (MTM) hat im Gegensatz zu einer normalen TM ein endliches Band, welches nur die Eingabe enth{\"a}lt und $k$ unendlich lange Arbeitsb{\"a}nder, jedes mit eigenem Lese-/ Schreibkopf.
+
+Zwei \textbf{Maschinenmodelle} $\mathcal{A}$ und $\mathcal{B}$ sind {\"a}quivalent, falls gilt:
+\begin{itemize}[noitemsep]
+	\item zu jeder Maschine $A \in \mathcal{A}$ existiert eine zu $A$ {\"a}quivalente Maschine $B \in \mathcal{B}$
+	\item zu jeder Maschine $C \in \mathcal{B}$ existiert eine zu $C$ {\"a}quivalente Maschine $D \in \mathcal{A}$
+\end{itemize}
+
+Zu jeder MTM $A$ existiert eine zu $A$ {\"a}quivalente 1-Band-TM $B$. Dies heisst jedoch nicht, dass $A$ und $B$ {\"a}quivalent sind. Es kann zum Beispiel sein, dass $A$ auf einem Wort $w \not\in L(A) = L(B)$ unendlich lange l{\"a}uft, w{\"a}hrend $B$ dieses verwirft. \\
+Die Maschinenmodelle von MTM und TM sind daher {\"a}quivalent.
+
+\section{Nichtdeterministische Turingmaschinen}
+
+Eine \textbf{nichtdeterministische Turingmaschine} $M$ ist ein Tupel mit der gleichen Definition wie eine normale TM, ausser der {\"u}bergangsfunktion. Diese wird mehr als Relation betrachtet:
+\begin{equation*}
+	\delta: (Q-\{q_\text{accept}, q_\text{reject}\}\times\Gamma) \mapsto \mathcal{P}(Q\times\Gamma\times\{L,R,N\})
+\end{equation*}
+
+\section{Sprachenhierarchie}
+
+Die Sprachen sind der Reihe nach aufgelistet (d.h. die unteren Sprachen enthalten die oberen)
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Klasse}                                                                  & \textbf{Notation}  & \textbf{Erkl{\"a}rung}                                                                                             & \textbf{Beispiel}   \\ \hline
+regul{\"a}r                                                                          & $\mathcal{L}_{EA}$ & Wird von einem EA akzeptiert                                                                                   & $x010y$             \\ \hline
+kontextfrei                                                                      &                    &                                                                                                                & $0^n1^n$, $ww^R$    \\ \hline
+kontextsensitiv                                                                  &                    &                                                                                                                &                     \\ \hline
+\begin{tabular}[c]{@{}l@{}}rekursiv\\ (entscheidbar)\end{tabular}                & $\mathcal{L}_R$    & \begin{tabular}[c]{@{}l@{}}Wird von einer TM akzeptiert\\ Die TM h{\"a}lt bei jedem eingegebenen Wort\end{tabular} &                     \\ \hline
+\begin{tabular}[c]{@{}l@{}}rekursiv aufz{\"a}hlbar\\ (semientscheidbar)\end{tabular} & $\mathcal{L}_{RE}$ & \begin{tabular}[c]{@{}l@{}}Wird von einer TM akzeptiert\\ Die TM h{\"a}lt bei jedem akzeptierten Wort\end{tabular} & $(L_\text{diag})^C$ \\ \hline
+unentscheidbar                                                                   &                    & Wird von keiner TM und EA akzeptiert                                                                           & $L_\text{diag}$     \\ \hline
+\end{tabular}
+\end{table}
+
+\section{Berechenbarkeit}
+
+\subsection{Methode der Reduktion}
+
+Seien $L_1 \subseteq \Sigma_1^*$ und $L_2 \subseteq \Sigma_2^*$ zwei Sprachen. Wir sagen, dass $L_1$ auf $L_2$ \textbf{rekursiv reduzierbar} ist, $L_1 \leq_R L_2$, falls
+\begin{equation*}
+	L_2 \in \mathcal{L}_R \Rightarrow L_1 \in \mathcal{L}_R
+\end{equation*}
+
+$L_1 \leq_R L_2$ bedeutet so viel wie "$L_2$ ist bez{\"u}glich algorithmischer Lösbarkeit mindestens so schwer wie $L_1$".
+
+F{\"u}r jede Sprache $L$ gilt:
+\begin{equation*}
+	L \leq_R L^C \quad\text{und}\quad L^C \leq_R L
+\end{equation*}
+
+\subsubsection{EE-Reduktion}
+
+Bei der \textbf{Eingabe-zu-Eingabe-Reduktion} ist die Idee, eine TM (einen Algorithmus) $M$ zu finden, die f{\"u}r jede Eingabe $x$ f{\"u}r das Entscheidungsproblem $(\Sigma_1,L_1)$ eine Eingabe $y$ f{\"u}r das Entscheidungsproblem $(\Sigma_2,L_2)$ konstruiert, so dass die Lösung des Problems $(\Sigma_2,L_2)$ f{\"u}r $y$ der Lösung des Problems $(\Sigma_1,L_1)$ f{\"u}r $x$ entspricht. \\
+
+Falls es so eine TM $M$ gibt, die die Abbildung $f_M: \Sigma_1^*\mapsto\Sigma_2^*$ berechnet, so dass
+\begin{equation*}
+	L_1 \leq_{EE} L_2 :\Leftrightarrow x \in L_1 \Leftrightarrow f_M(x) \in L_2
+\end{equation*}
+
+Dann sagen wir, dass $L_1$ auf $L_2$ \textbf{EE-reduzierbar} bzw. $M$ die Sprache $L_1$ auf $L_2$ reduziert. \\
+
+\textbf{Bemerkung:} Wichtig ist dabei, dass $f$ berechenbar ist, d.h. f{\"u}r alle $x$ muss die Berechnung terminieren, egal ob $x \in L_1$ oder $x \not\in L_1$.
+
+\subsubsection{Diagonalsprache}
+
+\begin{equation*}
+\begin{split}
+	L_\text{diag} &  = \{ w \in (\Sigma_\text{bool})^*\ |\ w = w_i \text{ f{\"u}r ein } i \in \mathbb{N} - \{0\} \text{ und $M_i$ akzeptiert $w_i$ nicht} \} \\
+	(L_\text{diag})^C &  = \{ w \in (\Sigma_\text{bool})^*\ |\ w = w_i \text{ f{\"u}r ein } i \in \mathbb{N} - \{0\} \text{ und $M_i$ akzeptiert $w_i$} \} \\
+\end{split}
+\end{equation*}
+
+\subsubsection{Universelle Sprache}
+
+\begin{equation*}
+	L_U = \{\text{Kod}(M)\#w\ |\ w \in (\Sigma_\text{bool})^* \text{ und M akzeptiert $w$}\}
+\end{equation*}
+
+Es gibt eine TM $U$, die \textbf{universelle TM}, so dass
+\begin{equation*}
+	L(U) = L_U
+\end{equation*}
+Es folgt, dass $L_U \in \mathcal{L}_\text{RE}$, jedoch nicht $L_U \in \mathcal{L}_\text{R}$. Dies leuchtet ein, da die simulierte Maschine $M$ f{\"u}r das eingegebene Wort $w$ nicht zwingend terminiert.
+
+\subsubsection{Halteproblem}
+
+Das \textbf{Halteproblem} ist das Entscheidungsproblem $(\{0, 1, \#\}, L_H)$, wobei
+\begin{equation*}
+	L_H = \{\text{Kod}(M)\#x\ |\ x \in \{0,1\}^* \text{ und M h{\"a}lt auf $x$ }\}
+\end{equation*}
+
+Da es kein Algorithmus gibt, der Testen kann, ob ein gegebenes Programm immer terminiert, gilt:
+\begin{equation*}
+	L_H \not\in \mathcal{L}_R
+\end{equation*}
+
+\subsubsection{Leere Sprache}
+
+Die \textbf{leere Sprache} ist die Sprache, die alle Kodierungen aller Turingmaschinen enth{\"a}lt, die die leere Menge (kein Wort) akzeptieren.
+\begin{equation*}
+	L_\text{empty} = \{\text{Kod}(M)\ |\ L(M) = \emptyset\}
+\end{equation*}
+
+Es gilt
+\begin{equation*}
+	(L_\text{empty})^C \in \mathcal{L}_{RE} \quad\text{und}\quad L_\text{empty} \not\in \mathcal{L}_{R}
+\end{equation*}
+
+\subsubsection{Satz von Rice}
+
+Jedes semantisch nichttriviale Entscheidungsproblem {\"u}ber Turingmaschinen ist unentscheidbar. 
+
+\subsubsection{Post'sche Korrespondenzproblem}
+
+Zielsetzung ist es, mit Hilfe der Reduktion die Untentscheidbarkeit aus der Welt der Turingmaschinen in die Welt der Spiele (Domino) zu {\"u}bertragen. Das Dominospiel wid auch \textbf{Post'sches Korrespondenzproblem (PKP)} gennant.\\
+
+Eine \textbf{Instanz des Post'schen Korrespondezproblems} ist ein Paar $(A,B)$, wobei $A = w_1,...,w_k$ und $B = x_1,...,x_k$. F{\"u}r jedes $i = 1,...,k$ wird $(w_i, x_i)$ ein \textbf{Dominiostein} genannt.
+
+Es existiert eine \textbf{Lösung}, falls $i_1, i_2,..., i_m$ so gew{\"a}hlt werden können, so dass:
+\begin{equation*}
+	w_{i_1}w_{i_2}...w_{i_m} = x_{i_1}x_{i_2}...x_{i_m}
+\end{equation*}
+
+Zus{\"a}tzlich dazu gibt es noch die modifizierte Variante, \textbf{MPKP}. Es ist ein Spezialform des \textbf{PKP}, bei der das Dominospiel immer mit dem ersten Dominosteintyp anfangen muss. Eine Lösung dazu ist die folgende:
+\begin{equation*}
+	u_1u_{j_1}u_{j_2}...u_{j_m} = v_1v_{j_1}v_{j_2}...v_{j_m}
+\end{equation*}
+
+\textbf{Bemerkung:} Falls PKP entscheidbar ist, ist auch MPKP entscheidbar. Da MPKP untentscheidbar ist, ist somit auch PKP \textbf{unentscheidbar}.
+
+\subsection{Methode der Kolmogorovkomplexit{\"a}t}
+
+Wir benutzen diese Methode, um zu beweisen, dass kein Algorithmus existiert, der die Kolmogorovkomplexit{\"a}t $K(x)$ von $x$ aller Wörter $x \in \Sigma^*_\text{bool}$ berechnen kann. Dies ist n{\"a}mlich \textbf{algorithmisch unlösbar}.
+
+\section{Komplexit{\"a}tstheorie}
+
+\subsection{Komplexit{\"a}tsmasse}
+
+\subsubsection{Zeitkomplexit{\"a}t}
+
+Sei $M$ eine MTM oder TM, die immer h{\"a}lt und sei $D = C_1,C_2,...,C_k$ die Berechnung von $M$ auf $x \in \Sigma^*$. Dann ist die \textbf{Zeitkomplexit{\"a}t} $\ttc_M(x)$ die Berechnung von $M$ auf $x$ definiert durch die Anzahl Berechnungsschritte in $D$:
+\begin{equation*}
+	\ttc_M(x) = k-1
+\end{equation*}
+
+Die Zeitkomplxit{\"a}t $\ttc_M: \mathbb{N} \mapsto \mathbb{N}$ ist als Funktion definiert durch:
+\begin{equation*}
+	\ttc(n) = \max\{\ttc_M(x)\ |\ x \in \Sigma^n\}
+\end{equation*}
+
+$\ttc_M(n)$ ist die Zeitkomplexit{\"a}t der l{\"a}ngsten Berechnung auf Eingaben der L{\"a}nge $n$. Man nennt dies auch \textbf{die Komplexit{\"a}t im schlechtesten Fall}.
+
+\subsubsection{Speicherplatzkomplexit{\"a}t}
+
+Sei $M$ eine $k$-Band-Turingmaschine, die immer h{\"a}lt und sei weiter $C = (q, x, i, \alpha_1, i_1, \alpha_2, i_2,..., \alpha_k, i_k)$ eine Konfiguration von $M$. Dann ist die \textbf{Speicherplatzkomplexit{\"a}t von $C$} gleich:
+\begin{equation*}
+	\tsc_M(C) = \max\{|\alpha_i|\ |\ i = 1,...,k\}
+\end{equation*}
+
+Sei $C_1, C_2,..., C_l$ die Berechnung von $M$ auf $x$, dann ist die \textbf{Speicherplatzkomplexit{\"a}t von $M$ auf $x$} geich
+\begin{equation*}
+	\tsc_M(x) = \max\{\tsc_M(C_i)\ |\ i = 1,...,l\}
+\end{equation*}
+
+Die \textbf{Speicherplatzkomplexit{\"a}t von $M$} ist die Funktion $\tsc_M: \mathbb{N} \mapsto \mathbb{N}$, definiert durch:
+\begin{equation*}
+	\tsc_M(n) = \max\{\tsc_M(x)\ |\ x \in \Sigma^n\}
+\end{equation*}
+
+Die Speicherplatzkomplexit{\"a}t einer Konfiguration ist also die \textbf{maximale beschriftete L{\"a}nge} eines Arbeitsbandes.
+
+\subsubsection{Asymptotische Komplexit{\"a}t}
+
+F{\"u}r jede Funktion $f: \mathbb{N} \mapsto \mathbb{R}^+$ definieren wir:
+\begin{equation*}
+\begin{split}
+	O(f(n)) & = \{r: \mathbb{N} \mapsto \mathbb{R}^+\ |\ \exists n_0 \in \mathbb{N}, \exists c \in \mathbb{N}, \text{ so dass f{\"u}r alle $n \geq n_0: r(n) \leq c\cdot f(n)$}\}  \\
+	\Omega(f(n)) & = \{s: \mathbb{N} \mapsto \mathbb{R}^+\ |\ \exists n_0 \in \mathbb{N}, \exists d \in \mathbb{N}, \text{ so dass f{\"u}r alle $n \geq n_0: s(n) \geq \frac{1}{d}\cdot f(n)$}\}  \\
+	\Theta(f(n)) & = \{q: \mathbb{N} \mapsto \mathbb{R}^+\ |\ \exists c,d,n_0 \in \mathbb{N}, \text{ so dass f{\"u}r alle $ n \geq n_0: \frac{1}{d}\cdot f(n) \leq q(n) \leq c\cdot f(n)$}\}  \\
+\end{split}
+\end{equation*}
+
+Mit Bedeutung:
+\begin{description}[labelindent=16pt,style=multiline,leftmargin=3cm, noitemsep]
+	\item[$r \in 0(f(n))$:] $r$ w{\"a}chst asymptotisch nicht schneller als $f$
+	\item[$s \in \Omega(f(n))$:] $r$ w{\"a}chst asymptotisch mindestens so schnell wie $f$
+	\item[$q \in \Theta(f(n))$:] $r$ w{\"a}chst asymptotisch gleich schnell wie $f$
+\end{description}
+
+Sei $L$ eine Sprache und $f,g$ zwei Funktionen, dann ist:
+\begin{itemize}[noitemsep]
+	\item $O(g(n))$ eine \textbf{obere Schranke f{\"u}r die Zeitkomplexit{\"a}t von $L$}, falls eine MTM $A$ existiert, so dass $L(A) = L$ und $\ttc_A(n) \in O(g(n))$
+	\item $\Omega(f(n))$ eine \textbf{untere Schranke f{\"u}r die Zeitkomplexit{\"a}t von $L$}, falls eine MTM $B$ existiert, so dass $L(B) = L$ und $\ttc_B(n) \in \Omega(f(n))$
+	\item Eine MTM $C$ heisst \textbf{optimal f{\"u}r $L$}, falls $\ttc_C(n) \in \O(f(n))$ gilt und $\Theta(f(n))$ eine untere Schranke f{\"u}r die Zeitkomplexit{\"a}t von $L$ ist.
+\end{itemize}
+
+\subsubsection{Komplexit{\"a}tsklassen}
+
+\begin{equation*}
+\begin{split}
+	\text{TIME}(f) & = \{L(B)\ |\ \text{B ist eine MTM mit } \ttc_B(n) \in O(f(n))\} \\
+	\text{SPACE}(g) & = \{L(A)\ |\ \text{A ist eine MTM mit } \tsc_A(n) \in O(g(n))\} \\
+	\text{DLOG} & = \text{SPACE}(\log_2 n) \\
+	\text{P} & = \bigcup_{c \in \mathbb{N}} \text{TIME}(n^c) \\
+	\text{PSPACE} & = \bigcup_{c \in \mathbb{N}} \text{SPACE}(n^c) \\
+	\text{EXPTIME} & = \bigcup_{d \in \mathbb{N}} \text{TIME}(2^{n^d}) \\
+\end{split}
+\end{equation*}
+
+Eine Funktion $s: \mathbb{N} \mapsto \mathbb{N}$ heisst \textbf{platzkonstruierbar}, falls ein 1-Band-TM $M$ existiert, so dass:
+\begin{enumerate}[label=(\roman*), noitemsep]
+	\item $\tsc_M(n) \leq s(n)$ f{\"u}r alle $n \in \mathbb{N}$
+	\item f{\"u}r jede Eingabe $0^n$ generiert generiert $M$ das Wort $0^{s(n)}$ und h{\"a}lt in $q_\text{accept}$
+\end{enumerate}
+
+Weiter ist eine Funktion $t: \mathbb{N} \mapsto \mathbb{N}$ \textbf{zeitkonstruierbar}, falls eine MTM $M$ existiert, so dass:
+\begin{enumerate}[label=(\roman*), noitemsep]
+	\item $\ttc_M(n) \in O(t(n))$
+	\item f{\"u}r jede Eingabe $0^n$ generiert generiert $M$ das Wort $0^{t(n)}$ und h{\"a}lt in $q_\text{accept}$
+\end{enumerate}
+
+\textbf{Bemerkung:} Die meisten gewöhnlichen monotonen Funktionen sind platzkonstruierbar bzw. zeitkonstruierbar. \\
+
+\subsection{Nichtdeterministische Komplexit{\"a}tsklassen}
+
+\subsubsection{Zeitkomplexit{\"a}t}
+
+Sei $M$ eine NTM mit $x \in L(M)$. Die \textbf{Zeitkomplexit{\"a}t von $M$ auf $x$} gleich:
+\begin{equation*}
+	\ttc_M(x) = \text{die L{\"a}nge einer k{\"u}rzesten akzeptierenden Berechnung}
+\end{equation*}
+
+Die \textbf{Zeitkomplexit{\"a}t von $M$} ist die Funktion $\ttc_M: \mathbb{N} \mapsto \mathbb{N}$:
+\begin{equation*}
+	\ttc_M(n) = \max(\{\ttc_M(x)\ |\ x \in L(M) \land |x| = n\} \cup \{0\})
+\end{equation*}
+
+\subsubsection{Speicherplatzkapazit{\"a}t}
+
+Sei $C = C_1C_2...C_m$ eine akzeptierende Berechnung von $M$ auf $x$. Dann ist
+\begin{equation*}
+	\tsc_M(C) = \max\{\tsc_M(C_i)\ |\ i=1,2,...,m\}
+\end{equation*}
+
+Die \textbf{Speicherplatzkapazit{\"a}t von $M$ auf $x$} ist dann definiert als
+\begin{equation*}
+	\tsc_M(x) = \min\{\tsc_M(C)\ |\ \text{$C$ ist eine akzeptierende Berechnung von $M$ auf $x$}\}
+\end{equation*}
+
+Die \textbf{Speicherplatzkomplexit{\"a}t von $M$} ist die Funktion $\tsc_M: \mathbb{N} \mapsto \mathbb{N}$:
+\begin{equation*}
+	\tsc_M(n) = \max(\{ \tsc_M(x)\ |\ x \in L(M) \land |x| = n\} \cup \{0\})
+\end{equation*}
+
+\subsubsection{Komplexit{\"a}tsklassen}
+
+\begin{equation*}
+\begin{split}
+	\text{NTIME}(f) & = \{L(B)\ |\ \text{B ist eine nichtdeterministische MTM mit } \ttc_B(n) \in O(f(n))\} \\
+	\text{NSPACE}(g) & = \{L(A)\ |\ \text{A ist eine nichtdeterministische MTM mit } \tsc_A(n) \in O(g(n))\} \\
+	\text{NLOG} & = \text{NSPACE}(\log_2 n) \\
+	\text{NP} & = \bigcup_{c \in \mathbb{N}} \text{NTIME}(n^c) \\
+	\text{NPSPACE} & = \bigcup_{c \in \mathbb{N}} \text{NSPACE}(n^c) \\
+\end{split}
+\end{equation*}
+
+F{\"u}r jede Funktion $t: \mathbb{N} \mapsto \mathbb{R}^+$ und $s: \mathbb{N} \mapsto \mathbb{N}$ mit $s(n) \geq \log_2(n)$ gelten folgende Vergleiche:
+
+\paragraph{Deterministisch - Deterministisch}
+\begin{equation*}
+\begin{split}
+	\text{DLOG} \subseteq \text{P} & \subseteq \text{PSPACE} \subseteq \text{EXPTIME} \\
+	\text{TIME}(s(n)) & \subseteq \text{SPACE}(s(n)) \\
+	\text{SPACE}(s(n)) & \subseteq \bigcup_{c \in \mathbb{N}} \text{TIME}(c^{s(n)})\\
+\end{split}
+\end{equation*}
+
+\paragraph{Nicht Deterministisch - Nicht Deterministisch}
+\begin{equation*}
+\begin{split}
+	\text{NTIME}(t) & \subseteq \text{NSPACE}(t)\\
+	\text{NSPACE}(s) & \subseteq \bigcup_{c \in \mathbb{N}}\text{NTIME}(c^{s(n)}) \\
+\end{split}
+\end{equation*}
+
+\paragraph{Deterministisch - Nicht Deterministisch}
+\begin{equation*}
+\begin{split}
+	\text{TIME}(t) & \subseteq \text{NTIME}(t) \\
+	\text{SPACE}(t) & \subseteq \text{NSPACE}(t) \\
+	\text{NTIME}(s(n)) & \subseteq \text{SPACE}(s(n)) \subseteq \bigcup_{c \in \mathbb{N}}\text{TIME}(c^{s(n)}) \\
+	\text{NP} & \subseteq \text{PSPACE} \\
+	\text{NLOG} & \subseteq \text{P} \\
+	\text{NPSPACE} & \subseteq \text{EXPTIME} \\
+	\text{PSPACE} & = \text{NPSPACE}
+\end{split}
+\end{equation*}
+
+\subsection{Beweisverifikation}
+
+Sei $L$ eine Sprache und $p: \mathbb{N} \mapsto \mathbb{N}$ eine Funktion. Wir sagen, dass MTM $A$ ein \textbf{p-Verifizierer f{\"u}r L} ist $V(A) = L$, falls $A$ folgenden Eigenschaften auf alle Eingaben aus $\Sigma^* \times (\Sigma_\text{bool})^*$ arbeitet:
+
+\begin{enumerate}[label=(\roman*), noitemsep]
+	\item $\ttc_A(w,x) \leq p(|w|)$ f{\"u}r jede Eingabe $(w,x) \in \Sigma^* \times (\Sigma_\text{bool})^*$
+	\item F{\"u}r jedes $w \in L$ existiert ein $x \in (\Sigma_\text{bool})^*$, so dass $|x| \leq p(|w|)$ und $(w,x) \in L(A)$. Das Wort $x$ ist ein \textbf{Beweis} f{\"u}r die Behauptung $w \in L$
+	\item F{\"u}r jedes $y \not\in L$ gilt $(y, z) \not\in L(A)$ f{\"u}r alle $z \in (\Sigma_\text{bool})^*$
+\end{enumerate}
+
+Ist $p(n) \in O(n^k)$ f{\"u}r ein $k \in \mathbb{N}$, nennen wir $A$ einen \textbf{Polynomialzeitverifizierer}. Somit wird $VP$ als die folgende Sprache definiert:
+\begin{equation*}
+	VP = \{V(A)\ |\ \text{A ist ein Polynomialzeitverifizierer}\}
+\end{equation*}
+
+\emph{Bemerkung:} $V(A)$ und $L(A)$ sind verschiedene Sprachen;
+\begin{equation*}
+	V(A) = \{ w \in \Sigma^*\ |\ \text{es existiert ein } x \in (\Sigma_\text{bool})^* \text{ mit } |x| \leq p(|w|) \}
+\end{equation*}
+
+Ein \textbf{p Verifizierer} $A$ f{\"u}r eine Sprache $L$ ist also ein deterministischer Algorithmus, der f{\"u}r die Eingabe $(w,x)$ verifiziert, ob $x$ ein Beweis f{\"u}r die Behauptung $w \in L$ ist.
+
+Jede polynomielle NTM kann in eine {\"a}quivalente NTM umgewandelt werden, die alle nichtdeterministischen Entscheidungen am Anfang macht und dann nur die Richtigkeit des geratenen verifiziert.
+
+\begin{equation*}
+	VP = NP
+\end{equation*}
+
+Daraus folgt, dass die Klasse NP die Klasse aller Sprachen $L$ ist, die f{\"u}r jedes $x \in L$ einen in $|x|$ polynomiell langen Beweis von $x \in L$ haben, welchen man deterministisch in polynomieller Zeit bez{\"u}glich $|x|$ verifizieren kann. 
+
+\subsection{NP-Vollst{\"a}ndigkeit}
+
+Seien $L_1 \subseteq \Sigma_1$ und $L_2 \subseteq \Sigma_2$ zwei Sprachen. $L_1$ ist polynomiell auf $L_2$ reduzierbar $L_1 \leq_p L_2$, falls eine polynomielle TM (Algorityhmus) $A$ existiert, die f{\"u}r jedes Wort $x \in \Sigma^*_1$ ein Wort $A(x) \in \Sigma^*_2$ berechnet, so dass
+\begin{equation*}
+	x \in L_1 \Leftrightarrow A(x) \in L_2
+\end{equation*}
+
+Dies bedeutet also, dass $L_2$ mindestens so schwer wie $L_1$ ist. \\
+
+Eine Sprache $L$ ist \textbf{NP-schwer}, falls f{\"u}r alle Sprachen $L' \in NP$ gilt $L' \leq_p L$. 
+Eine Sprache $L$ ist \textbf{NP-vollst{\"a}ndig}, falls gilt
+\begin{enumerate}[label=(\roman*), noitemsep]
+	\item $L \in NP$
+	\item $L$ ist NP-schwer
+\end{enumerate}
+
+Seien $L_1$ und $L_2$ zwei Sprachen mit $L_1 \leq_p L_2$ und $L_1$ ist NP-schwer, dann ist auch $L_2$ NP-schwer.
+
+\subsubsection{Vergleiche verschiedener Sprachen}
+
+Betrachten wir folgende Sprachen:
+\begin{equation*}
+\begin{split}
+	\sat & = \{x \in (\Sigma_\text{logic})^*\ |\ \text{$x$ kodiert eine erf{\"u}llbare Formel in KNF} \} \\
+	k-\sat & = \{x \in (\Sigma_\text{logic})^*\ |\ \text{$x$ kodiert eine erf{\"u}llbare Formel in k-KNF} \} \\
+	\clique & = \{(G,k)\ |\ \text{$G$ ist ein ungerichteter Graph, der eine $k$-Clique enth{\"a}lt} \} \\
+	\vc & = \{(G,k)\ |\ \text{$G$ ist ein ungerichteter Graph mit der Knoten{\"u}berdeckung der M{\"a}chtigkeit höchstens $k$} \} \\
+\end{split}
+\end{equation*}
+
+Eine \textbf{k-KNF} ist eine KNF, bei der jede Klausel aus höchstens 3 Literalen besteht.
+Eine \textbf{Clique} vom Graphen $G = (V,E)$ ist ein Subgraph $G'$, der vollst{\"a}ndig ist.
+Eine \textbf{Knoten{\"u}berdeckung} vom Graphen $G = (V,E)$ ist wenn jede Kante von $G$ mindestens einen Knoten aus $U$ (einer Teilmenge von $V$) enth{\"a}lt.
+
+Dann gelten:
+\begin{equation*}
+\begin{split}
+	\sat & \text{ ist NP-vollst{\"a}ndig (Satz von Cook)} \\
+	\sat & \leq_p \clique \\
+	\clique & \leq_p \vc \\
+	\sat & \leq_p 3\sat
+\end{split}
+\end{equation*}
+
+\subsubsection{Klasse der Optimierungsprobleme}
+
+\textbf{NPO} ist die \textbf{Klasse der Optimierungsprobleme}, wobei 
+\begin{equation*}
+	U = (\Sigma_I, \Sigma_O, L, \mathcal{M}, \text{cost}, \text{goal}) \in \npo
+\end{equation*}
+falls folgende Bedingungen erf{\"u}llt sind:
+\begin{enumerate}[label=(\roman*), noitemsep]
+	\item $L \in P$
+	\item Es existiert ein Probelm $p_U$, so dass
+		\begin{enumerate}
+			\item F{\"u}r jedes $x \in L$ und jedes $y \in \mathcal{M}(x)$ gilt $|y| \leq p_U(|x|)$
+			\item Es existiert ein polynomieller Algorithmus $A$, der f{\"u}r jedes $y \in \Sigma_O^*$ und jedes $x \in L$ mit $|y| \leq p_U(|x|)$ entscheidet, ob $y \in \mathcal{M}(x)$ oder nicht
+		\end{enumerate}
+	\item Die Funktion \emph{cost} kann man in polynomieller Zeit berechnen
+\end{enumerate}
+
+Weiter ist \textbf{PO} die \textbf{Klasse der Optimierungsprobleme} $U = (\Sigma_I, \Sigma_O, L, \mathcal{M}, \text{cost}, \text{goal})$, so dass
+\begin{enumerate}[label=(\roman*), noitemsep]
+	\item $U \in NPO$
+	\item Es existiert ein polynomieller Algorithmus $A$, so dass $A(x)$ f{\"u}r jedes $x \in L$ eine optimale Lösung ist
+\end{enumerate}
+
+
+\end{document}
