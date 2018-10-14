@@ -1,5 +1,7 @@
 # Zusammenfassungen ETH Informatik HS18
 
+[Theoretische Informatik](https://github.com/fabwu/eth-zusammenfassungen-hs18/raw/master/Theoretische%20Informatik/Zusammenfassung%20Theoretische%20Informatik.pdf)
+
 Quellen:
 
 - https://github.com/lbrndnr/ethz-summaries-b15
